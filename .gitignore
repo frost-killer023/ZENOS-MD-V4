@@ -1,0 +1,7 @@
+node_modules/
+auth_info_baileys/
+.env
+data/economy.json
+data/groups.json
+data/warns.json
+*.log

@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: zenos-md-v1
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node index.js
+    envVars:
+      - key: OWNER_NUMBER
+        value: 25766486303
+      - key: BOT_NAME
+        value: ZENOS-MD-V1
+      - key: PREFIX
+        value: "!"
+      - key: NODE_ENV
+        value: production
