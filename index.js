@@ -236,7 +236,12 @@ async function connectToWhatsApp() {
         mobile:                         false,
         connectTimeoutMs:               60_000,
         defaultQueryTimeoutMs:          60_000,
-        keepAliveIntervalMs:            30_000
+        keepAliveIntervalMs:            30_000,
+        // CRITIQUE : sans ça, Baileys épuise les refs QR (~140s) et ferme
+        // la connexion WS → le pairing code devient invalide avant que
+        // l'utilisateur ait eu le temps de l'entrer.
+        // 3_600_000ms = 1h par ref → connexion reste vivante indéfiniment.
+        qrTimeout:                      3_600_000
     });
     global.sock = sock;
 
