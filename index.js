@@ -104,11 +104,9 @@ http.createServer((req, res) => {
 <style>body{background:#0a0a0a;color:#fff;font-family:monospace;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}
 .box{text-align:center;padding:40px;border:2px solid #5555ff;border-radius:12px;max-width:600px}</style></head>
 <body><div class="box"><h2 style="color:#ffaa00">⏳ Pas encore de session</h2>
-<p>Connecte d'abord le bot avec le pairing code.</p>
-</div></body></html>`);
+<p>Connecte d'abord le bot avec le code de couplage.</p></div></body></html>`);
         }
-        return res.end(`<!DOCTYPE html><html><head><meta charset="utf-8">
-<title>Session — ${BOT_NAME}</title>
+        return res.end(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Session — ${BOT_NAME}</title>
 <style>body{background:#0a0a0a;color:#fff;font-family:monospace;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}
 .box{padding:40px;border:2px solid #00ff88;border-radius:12px;max-width:900px;width:90%}
 h2{color:#00ff88;text-align:center}
@@ -119,14 +117,12 @@ button{margin-top:12px;padding:10px 28px;background:#00ff88;color:#000;border:no
 <h2>💾 SESSION_DATA — ${BOT_NAME}</h2>
 <textarea id="sd" readonly>${b64}</textarea>
 <button onclick="navigator.clipboard.writeText(document.getElementById('sd').value).then(()=>this.textContent='✅ Copié!')">📋 Copier</button>
-<div class="steps">
-1️⃣ Copie la valeur<br>
-2️⃣ Render → Environment → <code>SESSION_DATA</code> = valeur<br>
-3️⃣ Redémarre → bot reconnecté sans code<br>
-</div></div></body></html>`);
+<div class="steps">1️⃣ Copie la valeur<br>2️⃣ Render → Environment → <code>SESSION_DATA</code><br>3️⃣ Redémarre → bot reconnecté sans code</div>
+</div></body></html>`);
     }
 
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+
     if (STATE.connected) {
         return res.end(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${BOT_NAME}</title>
 <style>body{background:#0a0a0a;color:#00ff88;font-family:monospace;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}
@@ -134,47 +130,43 @@ button{margin-top:12px;padding:10px 28px;background:#00ff88;color:#000;border:no
 .badge{background:#00ff88;color:#000;padding:8px 20px;border-radius:20px;font-weight:bold;font-size:1.2em}</style></head>
 <body><div class="box"><h1>✅ ${BOT_NAME}</h1>
 <p style="color:#aaa">Bot connecté et opérationnel</p>
-<p style="color:#aaa">👤 ${STATE.user || PHONE_NUMBER}</p>
+<p style="color:#aaa">👤 ${STATE.user || '+' + PHONE_NUMBER}</p>
 <br><span class="badge">EN LIGNE</span>
 <br><br><a href="/session" style="color:#00ff88">💾 Exporter session</a>
 <br><small style="color:#555">Uptime: ${Math.floor((Date.now() - startTime) / 1000)}s</small>
 </div></body></html>`);
     }
 
-    const age     = STATE.pairingAt ? Math.floor((Date.now() - STATE.pairingAt) / 1000) : null;
-    const expired = age !== null && age > 55;
     res.end(`<!DOCTYPE html><html><head><meta charset="utf-8">
-<meta http-equiv="refresh" content="8"><title>${BOT_NAME} — Connexion</title>
+<meta http-equiv="refresh" content="6"><title>${BOT_NAME} — Connexion</title>
 <style>
 body{background:#0a0a0a;color:#fff;font-family:monospace;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}
-.box{text-align:center;padding:40px;border:2px solid #5555ff;border-radius:12px;max-width:620px}
-h1{color:#5555ff;margin-bottom:4px}
-.code{font-size:2.8em;letter-spacing:12px;color:#ffdd00;background:#111;padding:20px 30px;border-radius:8px;margin:20px 0;border:2px dashed #ffdd00}
-.steps{text-align:left;margin-top:20px;color:#ccc;line-height:2.4}
+.box{text-align:center;padding:40px;border:2px solid #5555ff;border-radius:12px;max-width:640px;width:92%}
+h1{color:#5555ff;margin-bottom:6px}
+.code{font-size:3em;letter-spacing:14px;color:#ffdd00;background:#111;padding:22px 30px;border-radius:10px;margin:22px 0;border:2px dashed #ffdd00;font-weight:bold}
+.steps{text-align:left;margin-top:24px;color:#ccc;line-height:2.6;font-size:.95em}
 .ok{color:#00ff88}.warn{color:#ffaa00}.exp{color:#ff4444}
 </style></head>
 <body><div class="box">
 <h1>🤖 ${BOT_NAME}</h1>
 <p style="color:#888">Numéro : <strong style="color:#fff">+${PHONE_NUMBER}</strong></p>
 ${STATE.pairingCode
-    ? `<p>${expired
-        ? '<span class="exp">⏰ Code expiré — nouveau en cours...</span>'
-        : '<span class="ok">✅ Code actif</span>'}</p>
+    ? `<p class="ok">✅ Code de couplage actif</p>
        <div class="code">${STATE.pairingCode}</div>
        <p class="warn">📲 WhatsApp envoie une notification sur <strong>+${PHONE_NUMBER}</strong></p>`
-    : `<p class="warn">⏳ Connexion à WhatsApp en cours...<br><small style="color:#555">Le code apparaît ici automatiquement</small></p>`}
+    : `<p class="warn">⏳ Connexion à WhatsApp en cours…<br><small style="color:#555">Le code apparaît ici automatiquement (6s)</small></p>`}
 <div class="steps">
-<strong>📱 Comment coupler :</strong><br>
+<strong>📱 Étapes pour coupler :</strong><br>
 1️⃣ Ouvre WhatsApp sur le téléphone <strong>+${PHONE_NUMBER}</strong><br>
-2️⃣ ⚙️ Paramètres → <strong>Appareils connectés</strong><br>
-3️⃣ Appuie sur <strong>Connecter un appareil</strong><br>
-4️⃣ Choisis <strong>"Coupler avec un numéro de téléphone"</strong><br>
-5️⃣ Saisis <strong>+${PHONE_NUMBER}</strong><br>
-6️⃣ Entre le code affiché ci-dessus<br>
+2️⃣ ⚙️ <strong>Paramètres</strong> → <strong>Appareils connectés</strong><br>
+3️⃣ Appuie <strong>Connecter un appareil</strong><br>
+4️⃣ Choisis <strong>« Coupler avec un numéro de téléphone »</strong><br>
+5️⃣ Saisis ton numéro <strong>+${PHONE_NUMBER}</strong><br>
+6️⃣ Entre le code <strong style="color:#ffdd00">${STATE.pairingCode || '…'}</strong> ci-dessus<br>
 </div>
-<br><small style="color:#444">Rafraîchissement auto 8s | Tentative #${STATE.retries + 1}</small>
+<small style="color:#444">Rafraîchissement auto 6s · Tentative #${STATE.retries + 1}</small>
 </div></body></html>`);
-}).listen(PORT, () => console.log(`\n🌐 Interface: http://localhost:${PORT}`));
+}).listen(PORT, () => console.log(`🌐 Interface: http://localhost:${PORT}`));
 
 // ─── KEEP-ALIVE ───────────────────────────────────────────────────────────────
 let keepAliveInterval = null;
@@ -195,22 +187,16 @@ function startKeepAlive() {
 // ─── BOT ──────────────────────────────────────────────────────────────────────
 let sock           = null;
 let reconnectTimer = null;
-let pairingTimer   = null;
 let isFirstStart   = true;
 
 async function connectToWhatsApp() {
-    if (pairingTimer) { clearTimeout(pairingTimer); pairingTimer = null; }
-
-    // ── 1. Restaurer ou nettoyer la session ───────────────────────────────────
+    // ── 1. Session ────────────────────────────────────────────────────────────
     const hasSession = restoreSessionFromEnv();
 
     if (!hasSession && isFirstStart) {
-        // Effacer les credentials partiels d'une ancienne tentative.
-        // Des vieux fichiers dans auth_info_baileys corrompent le pairing code.
-        console.log('🧹 Nettoyage auth_info_baileys (démarrage propre)...');
+        console.log('🧹 Nettoyage auth_info_baileys (premier démarrage propre)…');
         await fs.remove(AUTH_DIR).catch(() => {});
         fs.ensureDirSync(AUTH_DIR);
-        console.log('✅ Répertoire propre');
     }
     isFirstStart = false;
 
@@ -219,11 +205,11 @@ async function connectToWhatsApp() {
     const { version }          = await fetchLatestBaileysVersion();
     const needsPairing         = !state.creds.registered;
 
-    console.log(`\n🚀 Baileys ${version.join('.')} | +${PHONE_NUMBER} | Pairing: ${needsPairing}`);
+    console.log(`\n🚀 Baileys ${version.join('.')} | +${PHONE_NUMBER} | Code requis: ${needsPairing}`);
 
     sock = makeWASocket({
         version,
-        logger: pino({ level: 'silent' }),
+        logger:                         pino({ level: 'silent' }),
         auth: {
             creds: state.creds,
             keys:  makeCacheableSignalKeyStore(state.keys, pino({ level: 'silent' }))
@@ -237,92 +223,82 @@ async function connectToWhatsApp() {
         connectTimeoutMs:               60_000,
         defaultQueryTimeoutMs:          60_000,
         keepAliveIntervalMs:            30_000,
-        // CRITIQUE : sans ça, Baileys épuise les refs QR (~140s) et ferme
-        // la connexion WS → le pairing code devient invalide avant que
-        // l'utilisateur ait eu le temps de l'entrer.
-        // 3_600_000ms = 1h par ref → connexion reste vivante indéfiniment.
+        // Maintient la connexion WS vivante longuement.
+        // Sans ça, Baileys ferme le socket après ~140s (refs épuisés),
+        // ce qui invalide le code avant que l'utilisateur ait eu le temps de le saisir.
         qrTimeout:                      3_600_000
     });
     global.sock = sock;
 
-    // ── 3. Pairing code ───────────────────────────────────────────────────────
-    // LOGIQUE CORRECTE (testée et validée) :
+    // ── 3. Demande du code de couplage ────────────────────────────────────────
     //
-    // WA envoie un stanza "pair-device" au début de chaque nouvelle connexion.
-    // Baileys réagit en émettant l'event { qr: "..." }.
-    // C'est exactement le bon moment pour envoyer "link_code_companion_reg" :
-    //   • trop tôt (avant pair-device) → WA refuse et ferme (401)
-    //   • trop tard (après QR timeout) → session expirée
-    //   • AU MOMENT du QR event → WA accepte et renvoie le code ✅
+    // WA envoie un stanza « pair-device » en début de session.
+    // Baileys émet en interne un événement { qr } pour signaler cela.
+    // On intercepte ce signal pour appeler requestPairingCode au bon moment :
+    //   • trop tôt (avant pair-device) → WA refuse avec code 401
+    //   • au moment du signal pair-device → WA accepte ✅
     //
-    // On ignore le QR (printQRInTerminal:false + on ne l'affiche pas) et on
-    // envoie immédiatement le pairing code à la place.
+    // Le code est généré UNE SEULE FOIS par session.
+    // Pas de régénération automatique : régénérer invalide l'ancien code
+    // et l'utilisateur qui saisirait l'ancien obtiendrait une erreur.
 
-    let pairingDone = false;
+    let codeRequested = false;
 
-    async function requestCode() {
-        if (STATE.connected || pairingDone) return;
-        pairingDone = true;
+    async function demanderCode() {
+        if (STATE.connected || codeRequested) return;
+        codeRequested = true;
         try {
-            console.log(`🔑 Demande pairing code pour +${PHONE_NUMBER}...`);
+            console.log(`🔑 Demande code de couplage pour +${PHONE_NUMBER}…`);
             const raw  = await sock.requestPairingCode(PHONE_NUMBER);
             const code = raw?.match(/.{1,4}/g)?.join('-') || raw;
 
             STATE.pairingCode = code;
             STATE.pairingAt   = Date.now();
 
-            const bar = '═'.repeat(46);
+            const bar = '═'.repeat(48);
             console.log(`\n╔${bar}╗`);
-            console.log(`║  🔗 PAIRING CODE WHATSAPP                      ║`);
+            console.log(`║  🔗 CODE DE COUPLAGE WHATSAPP                    ║`);
             console.log(`╠${bar}╣`);
-            console.log(`║  CODE : ${code.padEnd(37)}║`);
-            console.log(`║  Pour : +${PHONE_NUMBER.padEnd(36)}║`);
+            console.log(`║  CODE  : ${code.padEnd(39)}║`);
+            console.log(`║  POUR  : +${PHONE_NUMBER.padEnd(38)}║`);
             console.log(`╠${bar}╣`);
-            console.log(`║  📲 Notification envoyée sur ton téléphone     ║`);
-            console.log(`║  ⚡ Entre le code dans WhatsApp (60s max)      ║`);
+            console.log(`║  📲 Notification envoyée sur ton téléphone       ║`);
+            console.log(`║  ⚡ Entre le code dans WhatsApp dès que possible ║`);
             console.log(`╚${bar}╝\n`);
-
-            // Renouveler si pas connecté dans 55s
-            if (pairingTimer) clearTimeout(pairingTimer);
-            pairingTimer = setTimeout(() => {
-                pairingDone = false;
-                requestCode();
-            }, 55_000);
-
         } catch (e) {
-            console.error('❌ Pairing code error:', e.message);
-            pairingDone = false;
+            console.error('❌ Erreur code de couplage:', e.message);
+            codeRequested = false;
+            // Réessai après 10s si toujours pas connecté
             if (!STATE.connected) {
-                if (pairingTimer) clearTimeout(pairingTimer);
-                pairingTimer = setTimeout(requestCode, 8_000);
+                setTimeout(demanderCode, 10_000);
             }
         }
     }
 
     // Exposer pour !paircode
-    global.requestPairingCode = () => { pairingDone = false; requestCode(); };
+    global.requestPairingCode = () => { codeRequested = false; demanderCode(); };
 
-    // ── 4. Événements ─────────────────────────────────────────────────────────
+    // ── 4. Événements connexion ───────────────────────────────────────────────
     sock.ev.on('connection.update', async (update) => {
 
-        // ✅ DÉCLENCHEUR CORRECT : quand WA envoie pair-device, Baileys émet { qr }
-        // C'est le seul moment où requestPairingCode fonctionne sans erreur 401
+        // Signal interne Baileys : WA a envoyé pair-device → moment idéal
+        // pour envoyer link_code_companion_reg.
+        // On n'affiche rien — juste le déclencheur pour requestPairingCode.
         if (update.qr && needsPairing && !STATE.connected) {
-            await requestCode();
+            await demanderCode();
         }
 
         if (update.connection === 'connecting') {
-            console.log('🔄 Connexion aux serveurs WhatsApp...');
+            console.log('🔄 Connexion aux serveurs WhatsApp…');
         }
 
         if (update.connection === 'open') {
             STATE.connected   = true;
             STATE.pairingCode = null;
             STATE.user        = sock.user?.name || `+${sock.user?.id?.split(':')[0]}`;
-            if (pairingTimer) { clearTimeout(pairingTimer); pairingTimer = null; }
-            pairingDone = true;
+            codeRequested     = true; // empêche toute nouvelle demande
 
-            console.log(`\n✅ ${BOT_NAME} CONNECTÉ ! — ${STATE.user}`);
+            console.log(`\n✅ ${BOT_NAME} CONNECTÉ — ${STATE.user}`);
             loadCommands();
             startKeepAlive();
             await backupSession();
@@ -331,25 +307,24 @@ async function connectToWhatsApp() {
 
         if (update.connection === 'close') {
             STATE.connected = false;
-            pairingDone     = false;
+            codeRequested   = false;
             if (keepAliveInterval) { clearInterval(keepAliveInterval); keepAliveInterval = null; }
 
             const code = update.lastDisconnect?.error?.output?.statusCode;
             console.log(`🔴 Déconnecté (code ${code})`);
 
             if (code === DisconnectReason.loggedOut || code === 401) {
-                console.log('🗑️  Session révoquée — nettoyage...');
+                console.log('🗑️  Session révoquée — nettoyage et reconnexion…');
                 await fs.remove(AUTH_DIR).catch(() => {});
                 fs.ensureDirSync(AUTH_DIR);
                 STATE.pairingCode = null;
                 STATE.retries++;
-                isFirstStart = false;
                 if (reconnectTimer) clearTimeout(reconnectTimer);
                 reconnectTimer = setTimeout(connectToWhatsApp, 3_000);
             } else {
                 STATE.retries++;
                 const delay = code === DisconnectReason.restartRequired ? 1_000 : 5_000;
-                console.log(`🔄 Reconnexion dans ${delay / 1000}s...`);
+                console.log(`🔄 Reconnexion dans ${delay / 1000}s…`);
                 if (reconnectTimer) clearTimeout(reconnectTimer);
                 reconnectTimer = setTimeout(connectToWhatsApp, delay);
             }
@@ -417,7 +392,20 @@ async function sendWelcomeMsg() {
     try {
         const uptime = formatUptime(Math.floor((Date.now() - startTime) / 1000));
         await sock.sendMessage(getOwnerJid(), {
-            text: `╔══════════════════════════╗\n║   ✅ ${BOT_NAME} ACTIF  ║\n╠══════════════════════════╣\n║ 🤖 Connecté avec succès\n║ 💾 Session sauvegardée\n║ 💓 Keep-alive actif (25s)\n║ ⏱️  Uptime: ${uptime}\n╠══════════════════════════╣\n║ *!menu* — voir les commandes\n║ *!session* — exporter la session\n║ *!restart* — redémarrer le bot\n╚══════════════════════════╝`
+            text: [
+                `╔═══════════════════════════╗`,
+                `║  ✅ ${BOT_NAME} ACTIF  ║`,
+                `╠═══════════════════════════╣`,
+                `║ 🤖 Connecté avec succès`,
+                `║ 💾 Session sauvegardée`,
+                `║ 💓 Keep-alive actif (25s)`,
+                `║ ⏱️  Uptime: ${uptime}`,
+                `╠═══════════════════════════╣`,
+                `║ *!menu* — voir les commandes`,
+                `║ *!session* — exporter session`,
+                `║ *!restart* — redémarrer`,
+                `╚═══════════════════════════╝`
+            ].join('\n')
         });
     } catch (e) {
         console.error('Erreur welcome:', e.message);
