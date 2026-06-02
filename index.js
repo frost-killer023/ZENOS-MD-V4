@@ -245,6 +245,9 @@ async function connectToWhatsApp() {
     // puis on attend encore 5 secondes pour que le handshake soit terminé.
     // C'est la seule façon fiable sur Render (cold start lent).
 
+    // Exposer globalement pour que !paircode puisse l'appeler
+    global.requestPairingCode = (isRetry = false) => requestCode(isRetry);
+
     async function requestCode(isRetry = false) {
         if (STATE.connected) return;
         try {

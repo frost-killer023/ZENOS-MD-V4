@@ -150,6 +150,22 @@ const commands = {
         }
     },
 
+    // ─── PAIRCODE : regénérer le pairing code sans redéployer ─────────────────
+    paircode: async ({ sock, msg }) => {
+        const jid = msg.key.remoteJid;
+        if (typeof global.requestPairingCode !== 'function') {
+            return sock.sendMessage(jid, { text: '❌ Le bot est déjà connecté ou la fonction n\'est pas disponible.' });
+        }
+        await sock.sendMessage(jid, {
+            text: '🔑 *Génération d\'un nouveau pairing code...*\n\n• Le code apparaîtra dans les logs Render\n• Ouvre aussi ton URL Render pour le voir à l\'écran\n• Tu as 60 secondes pour l\'entrer dans WhatsApp'
+        });
+        try {
+            await global.requestPairingCode(true);
+        } catch (e) {
+            await sock.sendMessage(jid, { text: `❌ Erreur: ${e.message}` });
+        }
+    },
+
     // ─── BOT INFO SYSTÈME ─────────────────────────────────────────────────────
     sysinfo: async ({ sock, msg, startTime }) => {
         const os = require('os');
@@ -161,10 +177,13 @@ const commands = {
 };
 
 const aliases = {
-    'reboot':   'restart',
+    'reboot':     'restart',
     'redemarrer': 'restart',
-    'sessid':   'session',
-    'sauvegarde': 'session'
+    'sessid':     'session',
+    'sauvegarde': 'session',
+    'code':       'paircode',
+    'pair':       'paircode',
+    'newcode':    'paircode'
 };
 
 module.exports = { commands, aliases };
